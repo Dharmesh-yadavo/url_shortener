@@ -8,7 +8,7 @@
   <body>
     <div class="container">
       <h1>URL Shortener</h1>
-      <form id="shorten-form">
+      <form action="/" method="post">
         <div>
           <label for="url">Enter URL: </label>
           <input type="url" name="url" id="url" required />
@@ -21,10 +21,12 @@
       </form>
 
       <h2>Shortened URLs</h2>
-      <ul id="shortened-urls"></ul>
+      <ul>
+        {{ shortened_urls }}
+      </ul>
     </div>
 
-    <script>
+    <!-- <script>
       const fetchShortenedURL = async () => {
         const response = await fetch("/links");
         const links = await response.json();
@@ -70,6 +72,6 @@
         });
 
       fetchShortenedURL();
-    </script>
+    </script> -->
   </body>
 </html>
