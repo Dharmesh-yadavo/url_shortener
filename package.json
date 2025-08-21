@@ -9,8 +9,10 @@
     "db:seed": "node --env-file=.env drizzle/seed.js"
   },
   "dependencies": {
+    "dotenv": "^17.2.1",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
-    "mongodb": "^6.18.0"
+    "mongodb": "^6.18.0",
+    "zod": "^4.0.17"
   }
 }
