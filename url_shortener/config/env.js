@@ -37,5 +37,6 @@ export const env = z
     // PORT: z.coerce.number().default(3000),
     MONGODB_URI: z.string(),
     MONGODB_DATABASE_NAME: z.string(),
+    MONGOOSE_URI: z.string(),
   })
   .parse(process.env);

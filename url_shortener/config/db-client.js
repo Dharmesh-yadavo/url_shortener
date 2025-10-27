@@ -9,7 +9,7 @@ import { env } from "./env.js";
 
 export const connectDb = async () => {
   try {
-    await mongoose.connect(env.MONGODB_URI);
+    await mongoose.connect(env.MONGOOSE_URI);
     mongoose.set("debug", true);
   } catch (error) {
     console.log(error);
