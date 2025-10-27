@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="url-shortener shortener-content">
+      <h1 class="form-title">URL Shortener</h1>
+      <form class="shortener-form" id="shorten-form" action="/" method="post">
+        <div>
+          <label for="url">Enter URL: </label>
+          <input type="url" name="url" id="url" required />
+        </div>
+        <div>
+          <label for="shortCode">Enter Short Code: </label>
+          <input
+            class="shortCode"
+            type="text"
+            name="shortCode"
+            id="shortCode"
+            required
+          />
+        </div>
+        <button type="submit">Shorten</button>
+      </form>
+
+      <h2>Shortened URLs</h2>
+      <ul>
+        <% links.map(({ shortCode, url }) => { %>
+        <li>
+          <a href="/<%=shortCode%>" target="_blank">
+            <%=host%>/<%=shortCode%>
+          </a>
+          - <%=url %>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <!-- <script>
+      // Show Links in HTML by Fetching Data from Node.js
+      const fetchShortenedURL = async () => {
+        const response = await fetch("/links");
+        const links = await response.json();
+
+        const list = document.getElementById("shortened-urls");
+        list.innerHTML = "";
+
+        for (const [shortCode, url] of Object.entries(links)) {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href = "/${shortCode}" target = "_blank"> ${window.location.origin} / ${shortCode} </a> - ${url}`;
+          list.appendChild(li);
+        }
+      };
+
+      // Submitting the Form
+      document
+        .getElementById("shorten-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const formData = new FormData(event.target);
+          console.log(formData);
+          const url = formData.get("url");
+          const shortCode = formData.get("shortCode");
+          console.log(url, shortCode);
+        });
+
+      // Passing HTML form data to Node.js
+      try {
+        const response = await fetch ("/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url, shortCode }),
+        });
+
+        if (response.ok) {
+          fetchShortenedURL();
+          alert("form submitted successfully");
+          event.target.reset();
+        } else {
+          const errorMessage = await response.text();
+          alert(errorMessage);
+        }
+        } catch (error) {
+          console.log(error);
+        }
+
+        fetchShortenedURL();
+    </script> -->
+  </body>
+</html>
