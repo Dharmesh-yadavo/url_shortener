@@ -1,15 +1,18 @@
 import crypto from "crypto";
-import {
-  getLinkByShortCode,
-  loadLinks,
-  saveLinks,
-} from "../model/shortener.model.js";
+// import {
+//   getLinkByShortCode,
+//   loadLinks,
+//   saveLinks,
+// } from "../model/shortener.model.js";
+import { urls } from "../schema/url_schema.js";
 
 export const getUrlShortener = async (req, res) => {
   try {
     // const file = await readFile(path.join("views", "index.html"));
     //!
-    const links = await loadLinks();
+    // const links = await loadLinks();
+    const links = await urls.find(); //! using mongoose
+
     return res.render("index", { links, host: req.host });
   } catch (error) {
     console.log(error);
@@ -21,7 +24,10 @@ export const postUrlShortener = async (req, res) => {
   try {
     const { url, shortCode } = req.body;
     const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
-    const links = await loadLinks();
+
+    // const links = await loadLinks();
+    const links = await urls.find(); //! using mongoose
+
     if (links[finalShortCode]) {
       return res
         .status(400)
@@ -29,7 +35,10 @@ export const postUrlShortener = async (req, res) => {
     }
     // links[finalShortCode] = url;
     // await saveLinks(links);
-    await saveLinks({ url, shortCode });
+
+    // await saveLinks({ url, shortCode });
+    await urls.insertOne({ url, shortCode }); //! using mongoose
+
     res.redirect("/");
   } catch (error) {
     console.log(error);
@@ -40,9 +49,12 @@ export const redirectToShortLink = async (req, res) => {
   try {
     const { shortCode } = req.params;
     // const links = await loadLinks();
-    const links = await getLinkByShortCode(shortCode);
+    // const links = await getLinkByShortCode(shortCode);
+    const links = await urls.findOne({ shortCode: shortCode }); //! using mongoose
+
     // if (!links[shortCode]) return res.status(404).send("404 error occured");
     if (!links) return res.redirect("/404");
+
     // return res.redirect(links[shortCode]);
     return res.redirect(links.url);
   } catch (error) {

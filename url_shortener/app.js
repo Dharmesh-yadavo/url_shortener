@@ -1,3 +1,4 @@
+import { connectDb } from "./config/db-client.js";
 import { shortenedRoutes } from "./router/shortener.routes.js";
 import express from "express";
 
@@ -17,6 +18,11 @@ app.use(shortenedRoutes);
 
 const PORT = 3003;
 
-app.listen(PORT, () => {
-  console.log(`Server runing at https://localhost:${PORT}`);
-});
+try {
+  await connectDb();
+  app.listen(PORT, () => {
+    console.log(`Server runing at https://localhost:${PORT}`);
+  });
+} catch (error) {
+  console.log(error);
+}
