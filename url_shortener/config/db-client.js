@@ -20,13 +20,13 @@
 //
 
 //! using mySQL
-import mysql from "mysql2/promise";
+// import mysql from "mysql2/promise";
 
-// connecting to mysql servers
-export const db = await mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "dharmesh@23",
-  database: "url_shortener",
-});
-console.log("mySQL connected successfully");
+// // connecting to mysql servers
+// export const db = await mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "dharmesh@23",
+//   database: "url_shortener",
+// });
+// console.log("mySQL connected successfully");

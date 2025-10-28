@@ -32,11 +32,11 @@ import { z, ZodError } from "zod";
 // export const PORT = portSchema.parse(process.env.PORT);
 
 //! Mongodb changes:
-export const env = z
-  .object({
-    // PORT: z.coerce.number().default(3000),
-    MONGODB_URI: z.string(),
-    MONGODB_DATABASE_NAME: z.string(),
-    MONGOOSE_URI: z.string(),
-  })
-  .parse(process.env);
+// export const env = z
+//   .object({
+//     // PORT: z.coerce.number().default(3000),
+//     MONGODB_URI: z.string(),
+//     MONGODB_DATABASE_NAME: z.string(),
+//     MONGOOSE_URI: z.string(),
+//   })
+//   .parse(process.env);

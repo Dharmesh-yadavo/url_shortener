@@ -1,10 +1,16 @@
-import crypto from "crypto";
+// import crypto from "crypto";
+// import {
+//   getLinkByShortCode,
+//   loadLinks,
+//   saveLinks,
+// } from "../model/shortener.model.js";
+
 import {
   getLinkByShortCode,
   loadLinks,
   saveLinks,
-} from "../model/shortener.model.js";
-import { CURSOR_FLAGS } from "mongodb";
+} from "../services/shortener.services.js";
+
 // import { urls } from "../schema/url_schema.js";
 
 export const getUrlShortener = async (req, res) => {
