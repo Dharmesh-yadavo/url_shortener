@@ -24,12 +24,12 @@ export const getUrlShortener = async (req, res) => {
 export const postUrlShortener = async (req, res) => {
   try {
     // const { url, shortCode } = req.body;
-    const { url, short_code } = req.body;
-    const finalShortCode = short_code || crypto.randomBytes(4).toString("hex");
+    const { url, shortCode } = req.body;
+    const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
 
     // const links = await loadLinks();
     // const links = await urls.find(); //! using mongoose
-    const links = await getLinkByShortCode(short_code);
+    const links = await getLinkByShortCode(shortCode);
 
     if (links) {
       return res
@@ -39,7 +39,7 @@ export const postUrlShortener = async (req, res) => {
     // links[finalShortCode] = url;
     // await saveLinks(links);
 
-    await saveLinks({ url, short_code: finalShortCode });
+    await saveLinks({ url, shortCode: finalShortCode });
     // await urls.insertOne({ url, shortCode }); //! using mongoose
 
     res.redirect("/");
@@ -50,10 +50,10 @@ export const postUrlShortener = async (req, res) => {
 
 export const redirectToShortLink = async (req, res) => {
   try {
-    const { short_code } = req.params;
+    const { shortCode } = req.params;
     // console.log("shortCode:" + shortCode);
     // const links = await loadLinks();
-    const links = await getLinkByShortCode(short_code);
+    const links = await getLinkByShortCode(shortCode);
     // const links = await urls.findOne({ shortCode: shortCode }); //! using mongoose
 
     // if (!links[shortCode]) return res.status(404).send("404 error occured");

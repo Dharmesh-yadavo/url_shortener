@@ -62,11 +62,11 @@ export const getLinkByShortCode = async (short_code) => {
     `select * from short_links where short_code = ? `,
     [short_code]
   );
-  console.log("rows: " + rows.length);
-  console.log(rows[0]);
+  // console.log("rows: " + rows.length);
+  // console.log(rows[0]);
 
   if (rows.length > 0) {
-    rows[0];
+    return rows[0];
   } else {
     return null;
   }
