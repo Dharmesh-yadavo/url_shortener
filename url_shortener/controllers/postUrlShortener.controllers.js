@@ -1,4 +1,4 @@
-// import crypto from "crypto";
+import crypto from "crypto";
 // import {
 //   getLinkByShortCode,
 //   loadLinks,
@@ -30,8 +30,8 @@ export const getUrlShortener = async (req, res) => {
 export const postUrlShortener = async (req, res) => {
   try {
     // const { url, shortCode } = req.body;
-    const { url, shortCode } = req.body;
-    const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
+    const { url, shortCode } = req.body; //
+    const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex"); //
 
     // const links = await loadLinks();
     // const links = await urls.find(); //! using mongoose
