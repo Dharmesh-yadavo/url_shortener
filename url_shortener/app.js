@@ -1,9 +1,11 @@
 // import { connectDb } from "./config/db-client.js";
+import { authoRoutes } from "./router/auth.routes.js";
 import { shortenedRoutes } from "./router/shortener.routes.js";
 import express from "express";
 
 const app = express();
 
+// app.use("public");
 app.use(express.urlencoded({ extended: true }));
 
 //! EJS Template Engine in Express.js
@@ -14,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs"); // it by default access what is there in views
 // app.set("views", "./views"); // so, add this if ur file is not in views
 
+//! added
+app.use(authoRoutes);
 app.use(shortenedRoutes);
 
 const PORT = 3003;
