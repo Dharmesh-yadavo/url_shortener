@@ -4,6 +4,14 @@ import * as authControllers from "../controllers/auth.controllers.js";
 const router = Router();
 
 router.get("/register", authControllers.getRegisterPage);
-router.get("/login", authControllers.getLoginPage);
+
+// router.get("/login", authControllers.getLoginPage);
+// router.post("/login", authControllers.postLogin);
+
+//* instead of doing two different, do in one
+router
+  .route("/login")
+  .get(authControllers.getLoginPage)
+  .post(authControllers.postLogin);
 
 export const authoRoutes = router;

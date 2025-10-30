@@ -20,7 +20,15 @@ export const getUrlShortener = async (req, res) => {
     const links = await loadLinks();
     // const links = await urls.find(); //! using mongoose
 
-    return res.render("index", { links, host: req.host });
+    //!using cookies
+    let isLoggedIn = req.headers.cookie;
+    isLoggedIn = isLoggedIn
+      ?.split(";")
+      ?.find((cookie) => cookie.trim().startsWith("isLoggedIn"))
+      ?.split("=")[1];
+    console.log(isLoggedIn);
+
+    return res.render("index", { links, host: req.host, isLoggedIn });
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal server error");

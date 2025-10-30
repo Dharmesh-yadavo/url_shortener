@@ -5,7 +5,7 @@ import express from "express";
 
 const app = express();
 
-// app.use("public");
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 //! EJS Template Engine in Express.js
