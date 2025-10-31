@@ -23,7 +23,16 @@ export const getLoginPage = (req, res) => {
   return res.render("auth/login");
 };
 
-export const postLogin = (req, res) => {
+export const postLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await getUserByEmail(email);
+  console.log(user);
+
+  if (!user) return res.redirect("/login");
+
+  if (user.password !== password) return res.redirect("/login");
+
   // res.setHeader("Set-Cookie", "isLoggedIn=true; path=/;");
   res.cookie("isLoggedIn", true);
   res.redirect("/");
