@@ -7,11 +7,11 @@
     <title>Document</title>
   </head>
   <body>
-    <%- include('./partials/header.ejs') %> <%= (isLoggedIn) { %>
-    <h2>you are logged in</h2>
-    <%= } %> <% else { %>
-    <h2>you are not logged in</h2>
-    <%= } %>
+    <%- include('./partials/header.ejs') %> <% if(isLoggedIn) { %>
+    <h2>You are logged In</h2>
+    <% } else { %>
+    <h2>You are not logged In</h2>
+    <% } %>
 
     <div class="url-shortener shortener-content">
       <h1 class="form-title">URL Shortener</h1>
