@@ -21,12 +21,15 @@ export const getUrlShortener = async (req, res) => {
     // const links = await urls.find(); //! using mongoose
 
     //!using cookies
-    let isLoggedIn = req.headers.cookie;
-    isLoggedIn = isLoggedIn
-      ?.split(";")
-      ?.find((cookie) => cookie.trim().startsWith("isLoggedIn"))
-      ?.split("=")[1];
-    console.log(isLoggedIn);
+    // let isLoggedIn = req.headers.cookie;
+    // isLoggedIn = isLoggedIn
+    //   ?.split(";")
+    //   ?.find((cookie) => cookie.trim().startsWith("isLoggedIn"))
+    //   ?.split("=")[1];
+    // console.log(isLoggedIn);
+
+    //! now with the help of cookie-parser
+    let isLoggedIn = req.cookies.isLoggedIn;
 
     return res.render("index", { links, host: req.host, isLoggedIn });
   } catch (error) {

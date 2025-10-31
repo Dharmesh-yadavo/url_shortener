@@ -2,6 +2,7 @@
 import { authoRoutes } from "./router/auth.routes.js";
 import { shortenedRoutes } from "./router/shortener.routes.js";
 import express from "express";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -15,6 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs"); // it by default access what is there in views
 // app.set("views", "./views"); // so, add this if ur file is not in views
+
+//add this before authoRoutes
+app.use(cookieParser());
 
 //! added
 app.use(authoRoutes);
