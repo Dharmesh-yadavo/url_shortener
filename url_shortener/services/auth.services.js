@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../config/db.js";
 import { usersTable } from "../drizzle/schema.js";
 import bcrypt from "bcryptjs";
+import argon2 from "argon2";
 
 export const getUserByEmail = async (email) => {
   const [user] = await db
@@ -19,9 +20,11 @@ export const createUser = async ({ name, email, hashedPassword }) => {
 };
 
 export const hashPassword = async (password) => {
-  return await bcrypt.hash(password, 10);
+  // return await bcrypt.hash(password, 10);
+  return await argon2.hash(password);
 };
 
 export const comparePassword = async (password, hashPassword) => {
-  return await bcrypt.compare(password, hashPassword);
+  // return await bcrypt.compare(password, hashPassword);
+  return await argon2.verify(hashPassword, password);
 };
