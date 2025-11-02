@@ -19,4 +19,6 @@ router
   .get(authControllers.getLoginPage)
   .post(authControllers.postLogin);
 
+router.route("/Me").get(authControllers.getMe);
+
 export const authoRoutes = router;
