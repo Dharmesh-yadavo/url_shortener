@@ -3,6 +3,7 @@ import { authoRoutes } from "./router/auth.routes.js";
 import { shortenedRoutes } from "./router/shortener.routes.js";
 import express from "express";
 import cookieParser from "cookie-parser";
+import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.set("view engine", "ejs"); // it by default access what is there in views
 
 //add this before authoRoutes
 app.use(cookieParser());
+
+app.use(verifyAuthentication);
 
 //! added
 app.use(authoRoutes);
