@@ -28,10 +28,13 @@ export const postRegister = async (req, res) => {
 };
 
 export const getLoginPage = (req, res) => {
+  if (req.user) return res.redirect("/");
   return res.render("auth/login");
 };
 
 export const postLogin = async (req, res) => {
+  if (req.user) return res.redirect("/");
+
   const { email, password } = req.body;
 
   const user = await getUserByEmail(email);
@@ -62,4 +65,9 @@ export const postLogin = async (req, res) => {
 export const getMe = (req, res) => {
   if (!req.user) return res.send("Not logged in !");
   return res.send(`<h1>Hey, ${req.user.name} - ${req.user.email} </h1>`);
+};
+
+export const logoutUser = (req, res) => {
+  res.clearCookie("access_token");
+  res.redirect("/login");
 };
