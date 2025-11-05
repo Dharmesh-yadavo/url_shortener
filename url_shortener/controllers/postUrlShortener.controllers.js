@@ -15,9 +15,10 @@ import {
 
 export const getUrlShortener = async (req, res) => {
   try {
+    // if (!req.user) return res.redirect("auth/login");
     // const file = await readFile(path.join("views", "index.html"));
     //!
-    const links = await loadLinks();
+    const links = await loadLinks(req.user.id);
     // const links = await urls.find(); //! using mongoose
 
     //!using cookies
@@ -40,6 +41,7 @@ export const getUrlShortener = async (req, res) => {
 
 export const postUrlShortener = async (req, res) => {
   try {
+    // if (!req.user) return res.redirect("auth/login");
     // const { url, shortCode } = req.body;
     const { url, shortCode } = req.body; //
     const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex"); //
@@ -56,7 +58,7 @@ export const postUrlShortener = async (req, res) => {
     // links[finalShortCode] = url;
     // await saveLinks(links);
 
-    await saveLinks({ url, shortCode: finalShortCode });
+    await saveLinks({ url, shortCode: finalShortCode, userId: req.user.id });
     // await urls.insertOne({ url, shortCode }); //! using mongoose
 
     res.redirect("/");

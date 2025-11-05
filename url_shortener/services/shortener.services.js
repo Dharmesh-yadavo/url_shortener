@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../config/db.js";
 import { shortLinkTable } from "../drizzle/schema.js";
 
-export const loadLinks = async () => {
+export const loadLinks = async (userId) => {
   //   const [rows] = await db.execute(`select * from short_links`);
   //   console.log(rows);
   //   return rows;
@@ -15,10 +15,13 @@ export const loadLinks = async () => {
   // const allShortLinks = await prisma.shortLink.findMany();
   // return allShortLinks;
   //! drizzle
-  return await db.select().from(shortLinkTable);
+  return await db
+    .select()
+    .from(shortLinkTable)
+    .where(eq(shortLinkTable.user_Id, userId));
 };
 
-export const saveLinks = async ({ url, shortCode }) => {
+export const saveLinks = async ({ url, shortCode, userId }) => {
   //   const [result] = await db.execute(
   //     `insert into short_links(url, short_code) values(?, `?) `,
   //     [url, short_code]
@@ -31,8 +34,9 @@ export const saveLinks = async ({ url, shortCode }) => {
   // return newShortLink;
   //! drizzle
   const [newShortLink] = await db.insert(shortLinkTable).values({
-    url: url,
-    shortCode: shortCode,
+    url,
+    shortCode,
+    user_Id: userId,
   });
   return newShortLink;
 };
