@@ -4,6 +4,8 @@ import { shortenedRoutes } from "./router/shortener.routes.js";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
+import session from "express-session";
+import flash from "connect-flash";
 
 const app = express();
 
@@ -20,6 +22,11 @@ app.set("view engine", "ejs"); // it by default access what is there in views
 
 //add this before authoRoutes
 app.use(cookieParser());
+
+app.use(
+  session({ secret: "my-secret", resave: true, saveUninitialized: true })
+);
+app.use(flash());
 
 app.use(verifyAuthentication);
 

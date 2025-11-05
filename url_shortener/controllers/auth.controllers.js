@@ -7,7 +7,8 @@ import {
 } from "../services/auth.services.js";
 
 export const getRegisterPage = (req, res) => {
-  return res.render("auth/register");
+  if (req.user) return res.redirect("/");
+  return res.render("auth/register", { errors: req.flash("errors") });
 };
 
 export const postRegister = async (req, res) => {
@@ -17,7 +18,12 @@ export const postRegister = async (req, res) => {
   const userExist = await getUserByEmail(email);
   console.log(userExist);
 
-  if (userExist) return res.redirect("/resgister");
+  // if (userExist) return res.redirect("/resgister");
+
+  if (userExist) {
+    req.flash("errors", "User already exists");
+    return res.redirect("/register");
+  }
 
   const hashedPassword = await hashPassword(password);
 
@@ -29,7 +35,7 @@ export const postRegister = async (req, res) => {
 
 export const getLoginPage = (req, res) => {
   if (req.user) return res.redirect("/");
-  return res.render("auth/login");
+  return res.render("auth/login", { errors: req.flash("errors") });
 };
 
 export const postLogin = async (req, res) => {
@@ -40,12 +46,22 @@ export const postLogin = async (req, res) => {
   const user = await getUserByEmail(email);
   console.log(user);
 
-  if (!user) return res.redirect("/login");
+  // if (!user) return res.redirect("/login");
+  if (!user) {
+    req.flash("errors", "Invalid Email or Password");
+    return res.redirect("/login");
+  }
+
   // todo bcrypt.compare(plainTextPassword, hashPassword);
   const isPasswordValid = await comparePassword(password, user.password);
 
   // if (user.password !== password) return res.redirect("/login");
-  if (!isPasswordValid) return res.redirect("/login");
+
+  // if (!isPasswordValid) return res.redirect("/login");
+  if (!isPasswordValid) {
+    req.flash("errors", "Invalid Email or Password");
+    return res.redirect("/login");
+  }
 
   // res.setHeader("Set-Cookie", "isLoggedIn=true; path=/;");
   // res.cookie("isLoggedIn", true);
