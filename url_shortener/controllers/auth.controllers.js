@@ -31,7 +31,7 @@ export const postRegister = async (req, res) => {
   const { name, email, password } = data;
 
   const userExist = await getUserByEmail(email);
-  console.log(userExist);
+  // console.log(userExist);
 
   // if (userExist) return res.redirect("/resgister");
 
@@ -43,7 +43,7 @@ export const postRegister = async (req, res) => {
   const hashedPassword = await hashPassword(password);
 
   const [user] = await createUser({ name, email, hashedPassword });
-  console.log(user);
+  // console.log(user);
 
   res.redirect("/login");
 };
@@ -70,7 +70,7 @@ export const postLogin = async (req, res) => {
   const { email, password } = data;
 
   const user = await getUserByEmail(email);
-  console.log(user);
+  // console.log(user);
 
   // if (!user) return res.redirect("/login");
   if (!user) {

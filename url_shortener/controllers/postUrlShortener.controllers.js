@@ -9,7 +9,9 @@ import {
   getLinkByShortCode,
   loadLinks,
   saveLinks,
+  findShortLink,
 } from "../services/shortener.services.js";
+import z from "zod";
 
 // import { urls } from "../schema/url_schema.js";
 
@@ -32,7 +34,12 @@ export const getUrlShortener = async (req, res) => {
     //! now with the help of cookie-parser
     let isLoggedIn = req.cookies.isLoggedIn;
 
-    return res.render("index", { links, host: req.host, isLoggedIn });
+    return res.render("index", {
+      links,
+      host: req.host,
+      isLoggedIn,
+      errors: req.flash("errors"),
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal server error");
@@ -51,10 +58,16 @@ export const postUrlShortener = async (req, res) => {
     const links = await getLinkByShortCode(shortCode);
 
     if (links) {
-      return res
-        .status(400)
-        .send("Short code already exists. Please choose another. ");
+      // return res
+      //   .status(400)
+      //   .send("Short code already exists. Please choose another. ");
+      req.flash(
+        "errors",
+        "URL with that shortcode already exists, please choose another"
+      );
+      return res.redirect("/");
     }
+
     // links[finalShortCode] = url;
     // await saveLinks(links);
 
@@ -80,6 +93,27 @@ export const redirectToShortLink = async (req, res) => {
 
     // return res.redirect(links[shortCode]);
     return res.redirect(links.url);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal server error");
+  }
+};
+
+export const getShortenerEditPage = async (req, res) => {
+  if (!req.user) return res.redirect("/login");
+  const { data: id, error } = z.coerce.number().int().safeParse(req.params.id);
+  if (error) return res.redirect("/404");
+
+  try {
+    const shortLink = await findShortLink(id);
+    if (!shortLink) return res.redirect("/404");
+
+    res.render("edit-shortLink", {
+      id: shortLink.id,
+      url: shortLink.url,
+      shortCode: shortLink.shortCode,
+      errors: req.flash("errors"),
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal server error");

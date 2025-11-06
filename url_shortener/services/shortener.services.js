@@ -66,3 +66,11 @@ export const getLinkByShortCode = async (shortCode) => {
     .where(eq(shortLinkTable.shortCode, shortCode));
   return results;
 };
+
+export const findShortLink = async (id) => {
+  const [results] = await db
+    .select()
+    .from(shortLinkTable)
+    .where(eq(shortLinkTable.id, id));
+  return results;
+};
