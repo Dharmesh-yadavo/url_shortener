@@ -74,3 +74,7 @@ export const findShortLink = async (id) => {
     .where(eq(shortLinkTable.id, id));
   return results;
 };
+
+export const deleteShortLink = async (id) => {
+  await db.delete(shortLinkTable).where(eq(shortLinkTable.id, id));
+};
