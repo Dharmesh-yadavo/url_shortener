@@ -15,7 +15,7 @@ import {
 
 export const getUrlShortener = async (req, res) => {
   try {
-    // if (!req.user) return res.redirect("auth/login");
+    if (!req.user) return res.redirect("/login");
     // const file = await readFile(path.join("views", "index.html"));
     //!
     const links = await loadLinks(req.user.id);
@@ -41,7 +41,7 @@ export const getUrlShortener = async (req, res) => {
 
 export const postUrlShortener = async (req, res) => {
   try {
-    // if (!req.user) return res.redirect("auth/login");
+    if (!req.user) return res.redirect("/login");
     // const { url, shortCode } = req.body;
     const { url, shortCode } = req.body; //
     const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex"); //

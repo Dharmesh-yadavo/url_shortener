@@ -5,6 +5,10 @@ import {
   getUserByEmail,
   hashPassword,
 } from "../services/auth.services.js";
+import {
+  loginUserSchema,
+  registerUserSchema,
+} from "../validators/auth-validators.js";
 
 export const getRegisterPage = (req, res) => {
   if (req.user) return res.redirect("/");
@@ -13,7 +17,18 @@ export const getRegisterPage = (req, res) => {
 
 export const postRegister = async (req, res) => {
   // console.log(req.body); // to get the data of form // expressJS way
-  const { name, email, password } = req.body;
+  // const { name, email, password } = req.body;
+
+  const { data, error } = registerUserSchema.safeParse(req.body);
+
+  if (error) {
+    const errors = error.issues[0].message;
+    req.flash("errors", errors);
+    // console.log(errors);
+    return res.redirect("/register");
+  }
+
+  const { name, email, password } = data;
 
   const userExist = await getUserByEmail(email);
   console.log(userExist);
@@ -41,7 +56,18 @@ export const getLoginPage = (req, res) => {
 export const postLogin = async (req, res) => {
   if (req.user) return res.redirect("/");
 
-  const { email, password } = req.body;
+  // const { email, password } = req.body;
+
+  const { data, error } = loginUserSchema.safeParse(req.body);
+
+  if (error) {
+    const errors = error.issues[0].message;
+    req.flash("errors", errors);
+    // console.log(errors);
+    return res.redirect("/login");
+  }
+
+  const { email, password } = data;
 
   const user = await getUserByEmail(email);
   console.log(user);
