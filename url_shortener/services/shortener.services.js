@@ -75,6 +75,13 @@ export const findShortLink = async (id) => {
   return results;
 };
 
+export const editShortLink = async ({ id, url, shortCode }) => {
+  return await db
+    .update(shortLinkTable)
+    .set({ url, shortCode })
+    .where(eq(shortLinkTable.id, id));
+};
+
 export const deleteShortLink = async (id) => {
   await db.delete(shortLinkTable).where(eq(shortLinkTable.id, id));
 };

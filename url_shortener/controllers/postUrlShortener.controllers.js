@@ -10,6 +10,7 @@ import {
   loadLinks,
   saveLinks,
   findShortLink,
+  editShortLink,
   deleteShortLink,
 } from "../services/shortener.services.js";
 import z from "zod";
@@ -118,6 +119,23 @@ export const getShortenerEditPage = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal server error");
+  }
+};
+
+export const postShortenerEditPage = async (req, res) => {
+  if (!req.user) return res.redirect("/login");
+
+  const { data: id, error } = z.coerce.number().int().safeParse(req.params.id);
+  if (error) return res.redirect("/404");
+
+  const { url, shortCode } = req.body;
+
+  try {
+    await editShortLink({ id, url, shortCode });
+    return res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error);
   }
 };
 
