@@ -1,1 +1,0 @@
-ALTER TABLE `short_link` DROP INDEX `short_link_short_code_unique`;
