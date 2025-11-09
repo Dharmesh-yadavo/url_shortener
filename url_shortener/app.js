@@ -1,11 +1,13 @@
 // import { connectDb } from "./config/db-client.js";
+import cookieParser from "cookie-parser";
+import express from "express";
+import flash from "connect-flash";
+import requestIp from "request-ip";
+import session from "express-session";
+
 import { authoRoutes } from "./router/auth.routes.js";
 import { shortenedRoutes } from "./router/shortener.routes.js";
-import express from "express";
-import cookieParser from "cookie-parser";
 import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
-import session from "express-session";
-import flash from "connect-flash";
 
 const app = express();
 
@@ -27,6 +29,8 @@ app.use(
   session({ secret: "my-secret", resave: true, saveUninitialized: true })
 );
 app.use(flash());
+
+app.use(requestIp.mw());
 
 app.use(verifyAuthentication);
 
