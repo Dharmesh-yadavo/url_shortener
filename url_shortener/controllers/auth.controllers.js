@@ -1,18 +1,12 @@
 import {
-  ACCESS_TOKEN_EXPIRY,
-  REFRESH_TOKEN_EXPIRY,
-} from "../config/constants.js";
-import {
+  authenticateUser,
   celarUserSession,
-  cerateSession,
   comparePassword,
-  createAccessToken,
-  createRefreshToken,
   createUser,
-  // generateToken,
   getUserByEmail,
   hashPassword,
 } from "../services/auth.services.js";
+
 import {
   loginUserSchema,
   registerUserSchema,

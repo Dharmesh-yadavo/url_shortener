@@ -42,7 +42,7 @@ export const comparePassword = async (password, hashPassword) => {
 //   });
 // };
 
-export const cerateSession = async (userId, { ip, userAgent }) => {
+const cerateSession = async (userId, { ip, userAgent }) => {
   const [sessions] = await db
     .insert(sessionTable)
     .values({ userId, userAgent, ip })
@@ -129,7 +129,7 @@ export const celarUserSession = (sessionId) => {
 // authinticate user
 export const authenticateUser = async ({ req, res, user, name, email }) => {
   // we need to create a sessions
-  const session = await createSession(user.id, {
+  const session = await cerateSession(user.id, {
     ip: req.clientIp,
     userAgent: req.headers["user-agent"],
   });
