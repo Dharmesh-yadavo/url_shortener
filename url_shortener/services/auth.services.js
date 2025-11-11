@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../config/db.js";
-import { sessionTable, usersTable } from "../drizzle/schema.js";
+import { sessionTable, shortLinkTable, usersTable } from "../drizzle/schema.js";
 import bcrypt from "bcryptjs";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
@@ -155,4 +155,12 @@ export const authenticateUser = async ({ req, res, user, name, email }) => {
     ...baseConfig,
     maxAge: REFRESH_TOKEN_EXPIRY,
   });
+};
+
+// getAllShortLinks
+export const getAllShortLinks = async (userId) => {
+  return await db
+    .select()
+    .from(shortLinkTable)
+    .where(eq(shortLinkTable.user_Id, userId));
 };

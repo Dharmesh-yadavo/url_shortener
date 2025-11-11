@@ -19,6 +19,8 @@ router
   .get(authControllers.getLoginPage)
   .post(authControllers.postLogin);
 
+router.route("/profile").get(authControllers.getProfilePage);
+
 router.route("/Me").get(authControllers.getMe);
 router.route("/logout").get(authControllers.logoutUser);
 
