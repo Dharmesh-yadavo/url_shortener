@@ -1,4 +1,4 @@
-import { eq, lt } from "drizzle-orm";
+import { eq, lt, sql } from "drizzle-orm";
 import { db } from "../config/db.js";
 import {
   sessionTable,
@@ -15,6 +15,7 @@ import {
   REFRESH_TOKEN_EXPIRY,
 } from "../config/constants.js";
 import { name } from "ejs";
+import crypto from "crypto";
 
 export const getUserByEmail = async (email) => {
   const [user] = await db

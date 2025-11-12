@@ -1,13 +1,16 @@
+import { sendEmail } from "../lib/nodemailer.js";
 import {
   authenticateUser,
   celarUserSession,
   comparePassword,
   createUser,
+  createVerifyEmailLink,
   findUserById,
   generateRandomToken,
   getAllShortLinks,
   getUserByEmail,
   hashPassword,
+  insertVerifyEmailToken,
 } from "../services/auth.services.js";
 
 import {
@@ -183,8 +186,20 @@ export const resendVerificationLink = async (req, res) => {
 
   await insertVerifyEmailToken({ userId: req.user.id, token: randomToken });
 
-  const verifyEmailLink = await createVerifyEmailLink({
+  const verifyEmailLink = createVerifyEmailLink({
     email: req.user.email,
     token: randomToken,
   });
+
+  sendEmail({
+    to: req.user.email,
+    subject: "Verify your email",
+    html: `
+    <h1>Click the link below to verify your Email</h1>
+    <p>You can use this token: <code>${randomToken}</code></p>
+    <a href="${verifyEmailLink}">Verify Email</a>
+     `,
+  }).catch(console.error);
+
+  res.redirect("/verify-email");
 };
