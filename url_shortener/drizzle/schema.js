@@ -5,6 +5,7 @@ import {
   int,
   mysqlTable,
   varchar,
+  boolean,
 } from "drizzle-orm/mysql-core";
 
 export const shortLinkTable = mysqlTable("short_link", {
@@ -34,6 +35,7 @@ export const usersTable = mysqlTable("users", {
   name: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).unique().notNull(),
   password: varchar({ length: 255 }).notNull(),
+  isEmailValid: boolean("is_Email_Valid").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
