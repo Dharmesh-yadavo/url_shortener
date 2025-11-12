@@ -1,6 +1,11 @@
-import { eq } from "drizzle-orm";
+import { eq, lt } from "drizzle-orm";
 import { db } from "../config/db.js";
-import { sessionTable, shortLinkTable, usersTable } from "../drizzle/schema.js";
+import {
+  sessionTable,
+  shortLinkTable,
+  usersTable,
+  verifyEmailTokensTable,
+} from "../drizzle/schema.js";
 import bcrypt from "bcryptjs";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
@@ -164,4 +169,27 @@ export const getAllShortLinks = async (userId) => {
     .select()
     .from(shortLinkTable)
     .where(eq(shortLinkTable.user_Id, userId));
+};
+
+// generateRandomToken
+
+export const generateRandomToken = (digit = 8) => {
+  const min = 10 ** (digit - 1);
+  const max = 10 ** digit;
+
+  return crypto.randomInt(min, max).toString();
+};
+
+// insertVerifyEmailToken
+export const insertVerifyEmailToken = async ({ userId, token }) => {
+  await db
+    .delete(verifyEmailTokensTable)
+    .where(lt(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`));
+  return await db.insert(verifyEmailTokensTable).values({ userId, token });
+};
+
+// verifyEmailLink
+export const createVerifyEmailLink = ({ email, token }) => {
+  const uriEncodedEmail = encodeURIComponent(email);
+  return `${process.env.FRONTEND_URL}/verify-email-token?token=${token}&email=${uriEncodedEmail}`;
 };
