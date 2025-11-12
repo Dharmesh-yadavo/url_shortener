@@ -21,6 +21,8 @@ router
 
 router.route("/profile").get(authControllers.getProfilePage);
 
+router.route("/verify-email").get(authControllers.getVerifyEmailPage);
+
 router.route("/Me").get(authControllers.getMe);
 router.route("/logout").get(authControllers.logoutUser);
 
