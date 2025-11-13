@@ -272,6 +272,8 @@ export const createVerifyEmailLink = ({ email, token }) => {
 //     return null;
 //   }
 
+//   console.log("userData: ", userData);
+
 //   return {
 //     userId: userData[0].id,
 //     email: userData[0].email,
@@ -281,9 +283,11 @@ export const createVerifyEmailLink = ({ email, token }) => {
 // };
 
 export const findVerificationEmailToken = async ({ token, email }) => {
-  return await db
+  console.log("token: ", token);
+
+  return db
     .select({
-      userId: usersTable.userId,
+      userId: usersTable.id,
       email: usersTable.email,
       token: verifyEmailTokensTable.token,
       expiresAt: verifyEmailTokensTable.expiresAt,
@@ -296,25 +300,25 @@ export const findVerificationEmailToken = async ({ token, email }) => {
         gte(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`)
       )
     )
-    .innerJoin(usersTable, eq(verifyEmailTokensTable.userId, usersTable.id))
-    .limit(1);
+    .innerJoin(usersTable, eq(verifyEmailTokensTable.userId, usersTable.id));
 };
 
-// verifyUserEmailAndUpdate
-export const verifyUserEmailAndUpdate = (email) => {
+// /verifyUserEmailAndUpdate
+export const verifyUserEmailAndUpdate = async (email) => {
   return db
     .update(usersTable)
     .set({ isEmailValid: true })
     .where(eq(usersTable.email, email));
 };
 
-// clearVerifyEmailTokens
+//clearVerifyEmailTokens
 export const clearVerifyEmailTokens = async (userId) => {
   return await db
     .delete(verifyEmailTokensTable)
     .where(eq(verifyEmailTokensTable.userId, userId));
 };
 
+// sendNewVerifyEmailLink
 export const sendNewVerifyEmailLink = async ({ userId, email }) => {
   const randomToken = generateRandomToken();
 

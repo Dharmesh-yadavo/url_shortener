@@ -193,6 +193,34 @@ export const resendVerificationLink = async (req, res) => {
 
 // verifyEmailToken
 
+// export const verifyEmailToken = async (req, res) => {
+//   const { data, error } = verifyEmailSchema.safeParse(req.query);
+//   if (error) {
+//     return res.send("Verification link invalid or expired!");
+//   }
+
+//   // const token = await findVerificationEmailToken(data); // without joins
+//   const [token] = await findVerificationEmailToken(data); // with joins
+
+//   // const results = await findVerificationEmailToken(data);
+//   // const token = results[0]; // Get the first (and only expected) result
+//   console.log("🚀 ~ verifyEmailToken ~ token̥:", token);
+//   if (!token) res.send("Verification link invalid or expired!");
+//   // 1: token - same
+//   // 2: expire
+//   // 3: userId - email find
+
+//   const ress = await verifyUserEmailAndUpdate(token.email);
+//   // 1: to find email - vupdate the is emial ValidityState
+
+//   console.log(ress);
+
+//   // clearVerifyEmailTokens(token.email).catch(console.error);
+//   clearVerifyEmailTokens(token.userId).catch(console.error);
+
+//   return res.redirect("/profile");
+// };
+
 export const verifyEmailToken = async (req, res) => {
   const { data, error } = verifyEmailSchema.safeParse(req.query);
   if (error) {
@@ -200,10 +228,7 @@ export const verifyEmailToken = async (req, res) => {
   }
 
   // const token = await findVerificationEmailToken(data); // without joins
-  // const [token] = await findVerificationEmailToken(data); // with joins
-
-  const results = await findVerificationEmailToken(data);
-  const token = results[0]; // Get the first (and only expected) result
+  const [token] = await findVerificationEmailToken(data); // with joins
   console.log("🚀 ~ verifyEmailToken ~ token̥:", token);
   if (!token) res.send("Verification link invalid or expired!");
   // 1: token - same
