@@ -1,18 +1,15 @@
-import { sendEmail } from "../lib/nodemailer.js";
 import {
   authenticateUser,
   celarUserSession,
   clearVerifyEmailTokens,
   comparePassword,
   createUser,
-  createVerifyEmailLink,
   findUserById,
   findVerificationEmailToken,
-  generateRandomToken,
   getAllShortLinks,
   getUserByEmail,
   hashPassword,
-  insertVerifyEmailToken,
+  sendNewVerifyEmailLink,
   verifyUserEmailAndUpdate,
 } from "../services/auth.services.js";
 
@@ -61,6 +58,9 @@ export const postRegister = async (req, res) => {
   //! code for directly login after register ... copy paste postLogin access_token and refresh_token part
 
   await authenticateUser({ req, res, user, name, email });
+
+  //! Send Email Verification After User Registration
+  await sendNewVerifyEmailLink({ userId: user.id, email });
 
   res.redirect("/");
 };
@@ -186,45 +186,34 @@ export const resendVerificationLink = async (req, res) => {
 
   if (!user || user.isEmailValid) return res.redirect("/");
 
-  const randomToken = generateRandomToken();
-
-  await insertVerifyEmailToken({ userId: req.user.id, token: randomToken });
-
-  const verifyEmailLink = createVerifyEmailLink({
-    email: req.user.email,
-    token: randomToken,
-  });
-
-  sendEmail({
-    to: req.user.email,
-    subject: "Verify your email",
-    html: `
-    <h1>Click the link below to verify your Email</h1>
-    <p>You can use this token: <code>${randomToken}</code></p>
-    <a href="${verifyEmailLink}">Verify Email</a>
-     `,
-  }).catch(console.error);
+  await sendNewVerifyEmailLink({ userId: req.user.id, email: req.user.email });
 
   res.redirect("/verify-email");
 };
 
 // verifyEmailToken
 
-export const verifyEmailToken = async () => {
+export const verifyEmailToken = async (req, res) => {
   const { data, error } = verifyEmailSchema.safeParse(req.query);
   if (error) {
     return res.send("Verification link invalid or expired!");
   }
 
-  const token = await findVerificationEmailToken(data);
-  if (!token) res.send("verification link invalid or expired!");
+  // const token = await findVerificationEmailToken(data); // without joins
+  // const [token] = await findVerificationEmailToken(data); // with joins
+
+  const results = await findVerificationEmailToken(data);
+  const token = results[0]; // Get the first (and only expected) result
+  console.log("🚀 ~ verifyEmailToken ~ token̥:", token);
+  if (!token) res.send("Verification link invalid or expired!");
   // 1: token - same
   // 2: expire
   // 3: userId - email find
 
   await verifyUserEmailAndUpdate(token.email);
-  // 1: to find email - update the isEmailValid state in table
+  // 1: to find email - vupdate the is emial ValidityState
 
+  // clearVerifyEmailTokens(token.email).catch(console.error);
   clearVerifyEmailTokens(token.userId).catch(console.error);
 
   return res.redirect("/profile");

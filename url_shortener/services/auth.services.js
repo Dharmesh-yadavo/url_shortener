@@ -16,6 +16,7 @@ import {
 } from "../config/constants.js";
 import { name } from "ejs";
 import crypto from "crypto";
+import { sendEmail } from "../lib/nodemailer.js";
 
 export const getUserByEmail = async (email) => {
   const [user] = await db
@@ -295,7 +296,8 @@ export const findVerificationEmailToken = async ({ token, email }) => {
         gte(verifyEmailTokensTable.expiresAt, sql`CURRENT_TIMESTAMP`)
       )
     )
-    .innerJoin(usersTable, eq(verifyEmailTokensTable.userId, usersTable.id));
+    .innerJoin(usersTable, eq(verifyEmailTokensTable.userId, usersTable.id))
+    .limit(1);
 };
 
 // verifyUserEmailAndUpdate
@@ -303,7 +305,7 @@ export const verifyUserEmailAndUpdate = (email) => {
   return db
     .update(usersTable)
     .set({ isEmailValid: true })
-    .where(eq(usersTable.isEmailValid, email));
+    .where(eq(usersTable.email, email));
 };
 
 // clearVerifyEmailTokens
@@ -311,4 +313,25 @@ export const clearVerifyEmailTokens = async (userId) => {
   return await db
     .delete(verifyEmailTokensTable)
     .where(eq(verifyEmailTokensTable.userId, userId));
+};
+
+export const sendNewVerifyEmailLink = async ({ userId, email }) => {
+  const randomToken = generateRandomToken();
+
+  await insertVerifyEmailToken({ userId: userId, token: randomToken });
+
+  const verifyEmailLink = createVerifyEmailLink({
+    email: email,
+    token: randomToken,
+  });
+
+  sendEmail({
+    to: email,
+    subject: "Verify your email",
+    html: `
+      <h1>Click the link below to verify your Email</h1>
+      <p>You can use this token: <code>${randomToken}</code></p>
+      <a href="${verifyEmailLink}">Verify Email</a>
+       `,
+  }).catch(console.error);
 };
