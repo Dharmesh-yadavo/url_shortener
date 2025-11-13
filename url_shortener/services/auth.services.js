@@ -16,7 +16,7 @@ import {
 } from "../config/constants.js";
 import { name } from "ejs";
 import crypto from "crypto";
-import { sendEmail } from "../lib/nodemailer.js";
+import { sendEmail } from "../lib/send-emails.js";
 import path from "path";
 import fs from "fs/promises";
 import mjml2html from "mjml";
