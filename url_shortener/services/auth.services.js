@@ -17,6 +17,10 @@ import {
 import { name } from "ejs";
 import crypto from "crypto";
 import { sendEmail } from "../lib/nodemailer.js";
+import path from "path";
+import fs from "fs/promises";
+import mjml2html from "mjml";
+import ejs from "ejs";
 
 export const getUserByEmail = async (email) => {
   const [user] = await db
@@ -329,13 +333,24 @@ export const sendNewVerifyEmailLink = async ({ userId, email }) => {
     token: randomToken,
   });
 
+  // 1: to get the file data
+  const mjmlTemplate = await fs.readFile(
+    path.join(import.meta.dirname, "..", "emails", "verify-email.mjml"),
+    "utf-8"
+  );
+
+  // to replace the placeholders with the actual values
+  const filledTemplate = ejs.render(mjmlTemplate, {
+    code: randomToken,
+    link: verifyEmailLink,
+  });
+
+  // to convert mjml to html
+  const htmlOutput = mjml2html(filledTemplate).html;
+
   sendEmail({
     to: email,
     subject: "Verify your email",
-    html: `
-      <h1>Click the link below to verify your Email</h1>
-      <p>You can use this token: <code>${randomToken}</code></p>
-      <a href="${verifyEmailLink}">Verify Email</a>
-       `,
+    html: htmlOutput,
   }).catch(console.error);
 };
