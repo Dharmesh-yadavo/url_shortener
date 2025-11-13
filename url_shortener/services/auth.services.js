@@ -205,7 +205,32 @@ export const insertVerifyEmailToken = async ({ userId, token }) => {
 };
 
 // verifyEmailLink
+// export const createVerifyEmailLink = ({ email, token }) => {
+//   const uriEncodedEmail = encodeURIComponent(email);
+//   return `${process.env.FRONTEND_URL}/verify-email-token?token=${token}&email=${uriEncodedEmail}`;
+// };
+
+//* The URL API in JavaScript provides an easy way to construct, manipulate,
+//* and parse URLs without manual string concatenation. It ensures correct encoding,
+//* readability, and security when handling URLs.
+
+//? const url = new URL("https://example.com/profile?id=42&theme=dark");
+
+//! console.log(url.hostname); // "example.com"
+//! console.log(url.pathname); // "/profile"
+//! console.log(url.searchParams.get("id")); // "42"
+//! console.log(url.searchParams.get("theme")); // "dark"
+
+//* 💡 Why Use the URL API?
+//? ✅ Easier URL Construction – No need for manual ? and & handling.
+//? ✅ Automatic Encoding – Prevents issues with special characters.
+//? ✅ Better Readability – Clean and maintainable code.
+
 export const createVerifyEmailLink = ({ email, token }) => {
-  const uriEncodedEmail = encodeURIComponent(email);
-  return `${process.env.FRONTEND_URL}/verify-email-token?token=${token}&email=${uriEncodedEmail}`;
+  const url = new URL(`${process.env.FRONTEND_URL}/verify-email-token`);
+
+  url.searchParams.append("token", token);
+  url.searchParams.append("email", email);
+
+  return url.toString();
 };
