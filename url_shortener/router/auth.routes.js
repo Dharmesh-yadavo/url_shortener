@@ -27,6 +27,8 @@ router
   .route("/resend-verification-link")
   .post(authControllers.resendVerificationLink);
 
+router.route("/verify-email-token").get(authControllers.verifyEmailToken);
+
 router.route("/Me").get(authControllers.getMe);
 router.route("/logout").get(authControllers.logoutUser);
 
