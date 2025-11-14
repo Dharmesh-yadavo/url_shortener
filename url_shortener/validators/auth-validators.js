@@ -25,3 +25,13 @@ export const verifyEmailSchema = z.object({
   token: z.string().trim().length(8),
   email: z.string().trim().email(),
 });
+
+const nameSchema = z
+  .string()
+  .trim()
+  .min(3, { message: "Name must be at least 3 characters long." })
+  .max(100, { message: "Name must be no more than 100 characters." });
+
+export const verifyUserSchema = z.object({
+  name: nameSchema,
+});

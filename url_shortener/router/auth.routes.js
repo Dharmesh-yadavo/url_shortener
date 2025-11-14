@@ -29,6 +29,11 @@ router
 
 router.route("/verify-email-token").get(authControllers.verifyEmailToken);
 
+router
+  .route("/edit-profile")
+  .get(authControllers.getEditProfilePage)
+  .post(authControllers.postEditProfile);
+
 router.route("/Me").get(authControllers.getMe);
 router.route("/logout").get(authControllers.logoutUser);
 

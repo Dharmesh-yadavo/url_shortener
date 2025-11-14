@@ -11,8 +11,8 @@ import { verifyAuthentication } from "./middlewares/verify-auth-middleware.js";
 
 const app = express();
 
-app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 //! EJS Template Engine in Express.js
 //? In Express.js, a template engine is a tool that lets you embed dynamic content into HTML files
