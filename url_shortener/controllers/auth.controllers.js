@@ -3,7 +3,9 @@ import {
   celarUserSession,
   clearVerifyEmailTokens,
   comparePassword,
+  createResetPasswordLink,
   createUser,
+  findUserByEmail,
   findUserById,
   findVerificationEmailToken,
   getAllShortLinks,
@@ -16,6 +18,7 @@ import {
 } from "../services/auth.services.js";
 
 import {
+  forgotPasswordSchema,
   loginUserSchema,
   registerUserSchema,
   verifyEmailSchema,
@@ -321,4 +324,24 @@ export const getResetPasswordPage = async (req, res) => {
     formSubmitted: req.flash("formSubmitted")[0],
     errors: req.flash("errors"),
   });
+};
+
+// postResetPassword
+export const postResetPassword = async (req, res) => {
+  const { data, error } = forgotPasswordSchema.safeParse(req.body);
+  if (error) {
+    const errors = error.issues[0].message;
+    req.flash("errors", errors);
+    return res.redirect("/change-password");
+  }
+
+  const { email } = data;
+
+  const user = await findUserByEmail(email);
+
+  if (user) {
+    const resetPasswordLink = await createResetPasswordLink({
+      userId: user.id,
+    });
+  }
 };
