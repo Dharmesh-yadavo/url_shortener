@@ -160,6 +160,7 @@ export const getProfilePage = async (req, res) => {
       isEmailValid: user.isEmailValid,
       createdAt: user.createdAt,
       links: userShortLinks,
+      hasPassword: Boolean(user.password),
     },
   });
 };
@@ -246,6 +247,7 @@ export const verifyEmailToken = async (req, res) => {
   return res.redirect("/profile");
 };
 
+// getEditProfilePage
 export const getEditProfilePage = async (req, res) => {
   if (!req.user) return res.redirect("/");
 
@@ -257,6 +259,7 @@ export const getEditProfilePage = async (req, res) => {
   });
 };
 
+// postEditProfile
 export const postEditProfile = async (req, res) => {
   if (!req.user) return res.redirect("/");
 
@@ -273,4 +276,13 @@ export const postEditProfile = async (req, res) => {
   await updateUserByName({ userId: req.user.id, name: data.name });
 
   return res.redirect("/profile");
+};
+
+//getChangePasswordPage
+export const getChangePasswordPage = async (req, res) => {
+  if (!req.user) return res.redirect("/");
+
+  return res.render("auth/change-password", {
+    errors: req.flash("errors"),
+  });
 };
