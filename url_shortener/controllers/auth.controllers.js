@@ -343,5 +343,11 @@ export const postResetPassword = async (req, res) => {
     const resetPasswordLink = await createResetPasswordLink({
       userId: user.id,
     });
+
+    const html = getHtmlFromMjmlTemplate("reset-password-email", {
+      name: user.name,
+      link: resetPasswordLink,
+    });
   }
+  return res.redirect("/reset-password");
 };
