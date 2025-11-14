@@ -1,3 +1,5 @@
+import { getHtmlFromMjmlTemplate } from "../lib/get-html-from-mjml-template.js";
+import { sendEmail } from "../lib/send-emails.js";
 import {
   authenticateUser,
   celarUserSession,
@@ -318,36 +320,44 @@ export const postChangePassword = async (req, res) => {
   return res.redirect("/profile");
 };
 
-// getResetPasswordPage
+// /getResetPasswordPage
+
 export const getResetPasswordPage = async (req, res) => {
-  return res.render("/auth/forgot-password", {
+  return res.render("auth/forgot-password", {
     formSubmitted: req.flash("formSubmitted")[0],
     errors: req.flash("errors"),
   });
 };
 
-// postResetPassword
+//postResetPassword
 export const postResetPassword = async (req, res) => {
   const { data, error } = forgotPasswordSchema.safeParse(req.body);
+
   if (error) {
-    const errors = error.issues[0].message;
-    req.flash("errors", errors);
-    return res.redirect("/change-password");
+    const errorMessages = error.errors.map((err) => err.message);
+    req.flash("errors", errorMessages[0]);
+    return res.redirect("/reset-password");
   }
 
-  const { email } = data;
-
-  const user = await findUserByEmail(email);
+  const user = await findUserByEmail(data.email);
 
   if (user) {
     const resetPasswordLink = await createResetPasswordLink({
       userId: user.id,
     });
 
-    const html = getHtmlFromMjmlTemplate("reset-password-email", {
+    const html = await getHtmlFromMjmlTemplate("reset-password-email", {
       name: user.name,
       link: resetPasswordLink,
     });
+
+    sendEmail({
+      to: user.email,
+      subject: "Reset Your Password",
+      html,
+    });
   }
+
+  req.flash("formSubmitted", true);
   return res.redirect("/reset-password");
 };

@@ -374,9 +374,9 @@ export const updateUserPassword = async ({ userId, newPassword }) => {
     .where(eq(usersTable.id, userId));
 };
 
-// findUserByEmail
-export const findUserByEmail = async ({ email }) => {
-  const [user] = db
+// /findUserByEmail
+export const findUserByEmail = async (email) => {
+  const [user] = await db
     .select()
     .from(usersTable)
     .where(eq(usersTable.email, email));
@@ -384,7 +384,13 @@ export const findUserByEmail = async ({ email }) => {
   return user;
 };
 
-// createResetPasswordLink
+//todo steps
+//1: random token ✅
+// 2: convert into hash token ✅
+// 3: clear the user prev. data - delete ✅
+// 4: now we need to insert userid, hashToken ✅
+// 5: return the link (create the link ) ✅
+
 export const createResetPasswordLink = async ({ userId }) => {
   const randomToken = crypto.randomBytes(32).toString("hex");
 
