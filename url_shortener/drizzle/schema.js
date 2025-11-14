@@ -6,6 +6,7 @@ import {
   mysqlTable,
   varchar,
   boolean,
+  mysqlEnum,
 } from "drizzle-orm/mysql-core";
 
 export const shortLinkTable = mysqlTable("short_link", {
@@ -40,6 +41,33 @@ export const verifyEmailTokensTable = mysqlTable("verify_email_token", {
     // The brackets inside sql`` is necessary here, otherwise you would get syntax error.
     .default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 DAY)`)
     .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+//passwordResetTokensTable
+export const passwordResetTokensTable = mysqlTable("password_reset_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" })
+    .unique(),
+  tokenHash: text("token_hash").notNull(),
+  expiresAt: timestamp("expires_at")
+    .default(sql`(CURRENT_TIMESTAMP + INTERVAL 1 HOUR)`)
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+//oauthAccountsTable
+export const oauthAccountsTable = mysqlTable("oauth_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  provider: mysqlEnum("provider", ["google", "github"]).notNull(),
+  providerAccountId: varchar("provider_account_id", { length: 255 })
+    .notNull()
+    .unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
