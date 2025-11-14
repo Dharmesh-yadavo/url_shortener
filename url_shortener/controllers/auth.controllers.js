@@ -11,6 +11,7 @@ import {
   hashPassword,
   sendNewVerifyEmailLink,
   updateUserByName,
+  updateUserPassword,
   verifyUserEmailAndUpdate,
 } from "../services/auth.services.js";
 
@@ -287,7 +288,7 @@ export const getChangePasswordPage = async (req, res) => {
 };
 
 // postChangePassword
-export const postChangePassword = (req, res) => {
+export const postChangePassword = async (req, res) => {
   if (!req.user) return res.redirect("/");
 
   // const user = req.body;
@@ -298,7 +299,18 @@ export const postChangePassword = (req, res) => {
     return res.redirect("/change-password");
   }
 
-  console.log("data: ", data);
+  const { currentPassword, newPassword } = data;
 
-  return res.redirect("/change-password");
+  const user = await findUserById(req.user.id);
+  if (!user) return res.status(404).send("User not found");
+
+  const isPasswordValid = await comparePassword(currentPassword, user.password);
+  if (!isPasswordValid) {
+    req.flash("errors", "Current Password that you entered is invalid");
+    return res.redirect("/change-password");
+  }
+
+  await updateUserPassword({ userId: user.id, newPassword });
+
+  return res.redirect("/profile");
 };
