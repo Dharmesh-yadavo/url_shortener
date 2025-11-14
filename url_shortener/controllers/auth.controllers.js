@@ -18,6 +18,7 @@ import {
   loginUserSchema,
   registerUserSchema,
   verifyEmailSchema,
+  verifyPasswordSchema,
   verifyUserSchema,
 } from "../validators/auth-validators.js";
 
@@ -267,9 +268,7 @@ export const postEditProfile = async (req, res) => {
   const { data, error } = verifyUserSchema.safeParse(req.body);
   if (error) {
     const errors = error.issues[0].message;
-    console.log("errors : ", errors);
-    // const errorMessages = error.errors.map((err) => err.message);
-    req.flash("errors", error);
+    req.flash("errors", errors);
     return res.redirect("/edit-profile");
   }
 
@@ -285,4 +284,21 @@ export const getChangePasswordPage = async (req, res) => {
   return res.render("auth/change-password", {
     errors: req.flash("errors"),
   });
+};
+
+// postChangePassword
+export const postChangePassword = (req, res) => {
+  if (!req.user) return res.redirect("/");
+
+  // const user = req.body;
+  const { data, error } = verifyPasswordSchema.safeParse(req.body);
+  if (error) {
+    const errors = error.issues[0].message;
+    req.flash("errors", errors);
+    return res.redirect("/change-password");
+  }
+
+  console.log("data: ", data);
+
+  return res.redirect("/change-password");
 };
