@@ -3,6 +3,7 @@ import { sendEmail } from "../lib/send-emails.js";
 import {
   authenticateUser,
   celarUserSession,
+  clearResetPasswordToken,
   clearVerifyEmailTokens,
   comparePassword,
   createResetPasswordLink,
@@ -11,6 +12,7 @@ import {
   findUserById,
   findVerificationEmailToken,
   getAllShortLinks,
+  getResetPasswordToken,
   getUserByEmail,
   hashPassword,
   sendNewVerifyEmailLink,
@@ -25,6 +27,7 @@ import {
   registerUserSchema,
   verifyEmailSchema,
   verifyPasswordSchema,
+  verifyResetPasswordSchema,
   verifyUserSchema,
 } from "../validators/auth-validators.js";
 
@@ -362,7 +365,7 @@ export const postResetPassword = async (req, res) => {
   return res.redirect("/reset-password");
 };
 
-// getResetPasswordTokenPage
+//getResetPasswordTokenPage
 export const getResetPasswordTokenPage = async (req, res) => {
   const { token } = req.params;
   const passwordResetData = await getResetPasswordToken(token);
@@ -373,4 +376,37 @@ export const getResetPasswordTokenPage = async (req, res) => {
     errors: req.flash("errors"),
     token,
   });
+};
+
+//! Extract password reset token from request parameters.
+//! Validate token authenticity, expiration, and match with a previously issued token.
+//! If valid, get new password from request body and validate using a schema (e.g., Zod) for complexity.
+//! Identify user ID linked to the token.
+//! Invalidate all existing reset tokens for that user ID.
+//! Hash the new password with a secure algorithm .
+//! Update the user's password in the database with the hashed version.
+//! Redirect to login page or return a success response.
+
+//postResetPasswordToken
+export const postResetPasswordToken = async (req, res) => {
+  const { token } = req.params;
+  const passwordResetData = await getResetPasswordToken(token);
+  if (!passwordResetData) {
+    req.flash("errors", "Password Token is not matching");
+    return res.render("auth/wrong-reset-password-token");
+  }
+
+  const { data, error } = verifyResetPasswordSchema.safeParse(req.body);
+  if (error) {
+    const errorMessages = error.errors.map((err) => err.message);
+    req.flash("errors", errorMessages[0]);
+    res.redirect(`/reset-password/${token}`);
+  }
+
+  const { newPassword } = data;
+  const user = await findUserById(passwordResetData.userId);
+  await clearResetPasswordToken(user.id);
+  await updateUserPassword({ userId: user.id, newPassword });
+
+  return res.redirect("/login");
 };
