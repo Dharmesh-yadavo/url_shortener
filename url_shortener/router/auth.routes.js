@@ -44,6 +44,10 @@ router
   .get(authControllers.getResetPasswordPage)
   .post(authControllers.postResetPassword);
 
+router
+  .route("/reset-password:token")
+  .get(authControllers.getResetPasswordTokenPage);
+
 router.route("/Me").get(authControllers.getMe);
 router.route("/logout").get(authControllers.logoutUser);
 
