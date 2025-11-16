@@ -29,6 +29,7 @@ import {
   forgotPasswordSchema,
   loginUserSchema,
   registerUserSchema,
+  setPasswordSchema,
   verifyEmailSchema,
   verifyPasswordSchema,
   verifyResetPasswordSchema,
@@ -354,8 +355,8 @@ export const postResetPassword = async (req, res) => {
   const { data, error } = forgotPasswordSchema.safeParse(req.body);
 
   if (error) {
-    const errorMessages = error.errors.map((err) => err.message);
-    req.flash("errors", errorMessages[0]);
+    const errors = error.issues[0].message;
+    req.flash("errors", errors);
     return res.redirect("/reset-password");
   }
 
@@ -415,8 +416,8 @@ export const postResetPasswordToken = async (req, res) => {
 
   const { data, error } = verifyResetPasswordSchema.safeParse(req.body);
   if (error) {
-    const errorMessages = error.errors.map((err) => err.message);
-    req.flash("errors", errorMessages[0]);
+    const errors = error.issues[0].message;
+    req.flash("errors", errors);
     res.redirect(`/reset-password/${token}`);
   }
 
@@ -633,4 +634,41 @@ export const getGithubLoginCallback = async (req, res) => {
   await authenticateUser({ req, res, user, name, email });
 
   res.redirect("/");
+};
+
+//getSetPasswordPage
+export const getSetPasswordPage = async (req, res) => {
+  if (!req.user) return res.redirect("/");
+
+  return res.render("auth/set-password", {
+    errors: req.flash("errors"),
+  });
+};
+
+//postSetPassword
+export const postSetPassword = async (req, res) => {
+  if (!req.user) return res.redirect("/");
+
+  const { data, error } = setPasswordSchema.safeParse(req.body);
+
+  if (error) {
+    const errors = error.issues[0].message;
+    req.flash("errors", errors);
+    return res.redirect("/set-password");
+  }
+
+  const { newPassword } = data;
+
+  const user = await findUserById(req.user.id);
+  if (user.password) {
+    req.flash(
+      "errors",
+      "You already have your Password, Instead Change your password"
+    );
+    return res.redirect("/set-password");
+  }
+
+  await updateUserPassword({ userId: req.user.id, newPassword });
+
+  return res.redirect("/profile");
 };
