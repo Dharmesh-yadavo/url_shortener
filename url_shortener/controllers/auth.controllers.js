@@ -189,6 +189,7 @@ export const getProfilePage = async (req, res) => {
       createdAt: user.createdAt,
       links: userShortLinks,
       hasPassword: Boolean(user.password),
+      avatarUrl: user.avatarUrl,
     },
   });
 };
@@ -460,7 +461,7 @@ export const getGoogleLoginCallback = async (req, res) => {
   // google redirects with code, and state in query params
   // we will use code to find out the user
   const { code, state } = req.query;
-  console.log(code, state);
+  // console.log(code, state);
 
   const {
     google_oauth_state: storedState,
@@ -493,14 +494,14 @@ export const getGoogleLoginCallback = async (req, res) => {
     return res.redirect("/login");
   }
 
-  console.log("token google: ", tokens);
+  // console.log("token google: ", tokens);
 
-  console.log("tokens.idToken(): ", tokens.idToken());
+  // console.log("tokens.idToken(): ", tokens.idToken());
 
   const claims = decodeIdToken(tokens.idToken());
-  console.log("claim: ", claims);
+  // console.log("claim: ", claims);
 
-  const { sub: googleUserId, name, email } = claims;
+  const { sub: googleUserId, name, email, picture } = claims;
 
   //! there are few things that we should do
   // Condition 1: User already exists with google's oauth linked
@@ -519,6 +520,7 @@ export const getGoogleLoginCallback = async (req, res) => {
       userId: user.id,
       provider: "google",
       providerAccountId: googleUserId,
+      avatarUrl: picture,
     });
   }
 
@@ -529,6 +531,7 @@ export const getGoogleLoginCallback = async (req, res) => {
       email,
       provider: "google",
       providerAccountId: googleUserId,
+      avatarUrl: picture,
     });
   }
 
@@ -588,7 +591,7 @@ export const getGithubLoginCallback = async (req, res) => {
   });
   if (!githubUserResponse.ok) return handleFailedLogin();
   const githubUser = await githubUserResponse.json();
-  const { id: githubUserId, name } = githubUser;
+  const { id: githubUserId, name, avatar_url } = githubUser;
 
   const githubEmailResponse = await fetch(
     "https://api.github.com/user/emails",
@@ -619,6 +622,7 @@ export const getGithubLoginCallback = async (req, res) => {
       userId: user.id,
       provider: "github",
       providerAccountId: githubUserId,
+      avatarUrl: avatar_url,
     });
   }
 
@@ -628,6 +632,7 @@ export const getGithubLoginCallback = async (req, res) => {
       email,
       provider: "github",
       providerAccountId: githubUserId,
+      avatarUrl: avatar_url,
     });
   }
 

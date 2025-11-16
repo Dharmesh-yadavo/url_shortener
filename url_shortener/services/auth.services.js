@@ -462,12 +462,20 @@ export async function linkUserWithOauth({
   userId,
   provider,
   providerAccountId,
+  avatarUrl,
 }) {
   await db.insert(oauthAccountsTable).values({
     userId,
     provider,
     providerAccountId,
   });
+
+  if (avatarUrl) {
+    await db
+      .update(usersTable)
+      .set({ avatarUrl })
+      .where(and(eq(usersTable.id, userId), isNull(usersTable.avatarUrl)));
+  }
 }
 
 // createUserWithOauth
@@ -476,6 +484,7 @@ export async function createUserWithOauth({
   email,
   provider,
   providerAccountId,
+  avatarUrl,
 }) {
   const user = await db.transaction(async (trx) => {
     const [user] = await trx
