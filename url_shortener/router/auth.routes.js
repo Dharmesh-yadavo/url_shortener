@@ -49,6 +49,9 @@ router
   .get(authControllers.getResetPasswordTokenPage)
   .post(authControllers.postResetPasswordToken);
 
+router.route("/google").get(authControllers.getGoogleLoginPage);
+router.route("/google/callback").get(authControllers.getGoogleLoginCallback);
+
 router.route("/Me").get(authControllers.getMe);
 router.route("/logout").get(authControllers.logoutUser);
 

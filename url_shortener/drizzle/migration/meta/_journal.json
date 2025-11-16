@@ -15,6 +15,13 @@
       "when": 1763114695629,
       "tag": "0001_futuristic_masked_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1763283902436,
+      "tag": "0002_omniscient_legion",
+      "breakpoints": true
     }
   ]
 }
