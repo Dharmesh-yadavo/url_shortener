@@ -433,6 +433,7 @@ export const clearResetPasswordToken = async (userId) => {
     .where(eq(passwordResetTokensTable.userId, userId));
 };
 
+// getUserWithOauthId
 export async function getUserWithOauthId({ email, provider }) {
   const [user] = await db
     .select({
@@ -456,6 +457,7 @@ export async function getUserWithOauthId({ email, provider }) {
   return user;
 }
 
+// linkUserWithOauth
 export async function linkUserWithOauth({
   userId,
   provider,
@@ -468,6 +470,7 @@ export async function linkUserWithOauth({
   });
 }
 
+// createUserWithOauth
 export async function createUserWithOauth({
   name,
   email,
