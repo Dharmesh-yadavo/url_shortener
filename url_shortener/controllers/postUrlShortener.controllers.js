@@ -14,6 +14,7 @@ import {
   deleteShortLink,
 } from "../services/shortener.services.js";
 import z from "zod";
+import { shortenerSearchParamsSchema } from "../validators/shortener-validators.js";
 
 // import { urls } from "../schema/url_schema.js";
 
@@ -22,8 +23,18 @@ export const getUrlShortener = async (req, res) => {
     if (!req.user) return res.redirect("/login");
     // const file = await readFile(path.join("views", "index.html"));
     //!
-    const links = await loadLinks(req.user.id);
+    // const links = await loadLinks(req.user.id);
     // const links = await urls.find(); //! using mongoose
+
+    const searchParams = shortenerSearchParamsSchema.parse(req.query);
+
+    const { shortLinks, totalCount } = await loadLinks({
+      userId: req.user.id,
+      limit: 10,
+      offset: (searchParams.page - 1) * 10,
+    });
+
+    const totalPages = Math.ceil(totalCount / 10);
 
     //!using cookies
     // let isLoggedIn = req.headers.cookie;
@@ -37,9 +48,11 @@ export const getUrlShortener = async (req, res) => {
     let isLoggedIn = req.cookies.isLoggedIn;
 
     return res.render("index", {
-      links,
+      links: shortLinks,
       host: req.host,
       isLoggedIn,
+      currentPage: searchParams.page,
+      totalPages: totalPages,
       errors: req.flash("errors"),
     });
   } catch (error) {
